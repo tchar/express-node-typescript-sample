@@ -1,4 +1,5 @@
 import { environment } from "@app/environments/environment";
+import { PrefixLogger } from "@app/logger/prefix_logger";
 import bunyan from "bunyan";
 import fs from "fs";
 import path from "path";
@@ -45,12 +46,14 @@ class Logger {
                 stream: process.stdout,
             }],
         });
-        Logger.logger.info("Logging to folder " + Logger.dir, {
+        Logger.logger.info("Logger: Logging to folder " + Logger.dir, {
             error: "error.log",
             info: "info.log",
             warn: "warn.log",
         });
     }
+
+    private constructor() { }
 }
 
 const logger: bunyan = Logger.getLogger();
