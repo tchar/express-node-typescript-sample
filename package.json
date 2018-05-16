@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "removeEnvironment": "rm ./dist/environments/environment.prod.js",
+    "prodEnvironment": "mv ./dist/environments/environment.prod.js ./dist/environments/environment.js",
+    "start": "rm -rf ./dist && tsc && npm run removeEnvironment && node -r tsconfig-paths/register ./dist/index.js",
+    "dev": "npm start",
+    "build": "rm -rf ./dist && tsc && npm run removeEnvironment",
+    "prod": "rm -rf ./dist && tsc && npm run prodEnvironment && node -r tsconfig-paths/register ./dist/index.js",
+    "buildProd": "rm -rf ./dist && tsc && npm run prodEnvironment",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tilemachos Charalampous",
+  "license": "MIT",
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/bunyan": "^1.8.4",
+    "@types/express": "^4.11.1",
+    "@types/node": "^10.1.0",
+    "tsconfig-paths": "^3.3.2"
+  }
+}
