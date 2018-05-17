@@ -3,7 +3,7 @@ import { UserController } from "@app/controllers/user";
 import { IExpressModule } from "@app/express/express_module";
 import { BasicAuthMiddleware } from "@app/middlewares/basic_auth";
 import { IRouter } from "@app/router/router";
-import { DataService } from "@app/service/data_service";
+import { DataService } from "@app/services/data_service";
 import bodyParser from "body-parser";
 import { Router as ExpressRouter } from "express";
 

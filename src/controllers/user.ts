@@ -1,6 +1,6 @@
 import { ExpressModuleImpl } from "@app/express/express_module";
 import { PrefixLogger } from "@app/logger/prefix_logger";
-import { DataService } from "@app/service/data_service";
+import { DataService } from "@app/services/data_service";
 import { NextFunction, Request, Response } from "express";
 
 class UserController extends ExpressModuleImpl {
@@ -16,11 +16,11 @@ class UserController extends ExpressModuleImpl {
         const postLogger: PrefixLogger = this.logger.addPrefix("post");
         postLogger.info({ requestId: req.id }, "Incoming request");
         this.dataService.login(req.body.username, req.body.password)
-        .then(() => {
+        .then((_: any) => {
             this.logger.addPrefix("post").info({requestId: req.id}, "Logged in successfully");
             res.send();
         })
-        .catch((err) => {
+        .catch((err: Error) => {
             this.logger.addPrefix("post").warn({err, requestId: req.id}, err.message);
             res.setHeader("WWW-Authenticate", "Basic");
             res.status(401).send("Invalid username or password");

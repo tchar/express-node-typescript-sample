@@ -5,7 +5,7 @@ class DataService {
     private users: any[] = [];
 
     constructor() {
-        this.users.push(this.newUser("test", "test"));
+        this.newUser("test", "test");
     }
 
     public getUserFromId(id: string): any {
@@ -21,15 +21,7 @@ class DataService {
         if (this.getUserFromUsername(username) != null) {
             return Promise.reject(new Error("User already exists"));
         }
-        return new Promise((resolve, reject) => {
-            randomBytes(12, (err: Error, buf: Buffer) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(buf);
-                }
-            });
-        }).then((salt) => {
+        return this.generateSalt().then((salt) => {
             const hash = createHash("sha256");
             password = hash.update(Buffer.concat([Buffer.from(password), salt])).digest("base64");
             const user = {
@@ -44,7 +36,7 @@ class DataService {
 
     public login(username: string, password: string): Promise<void> {
         const user = this.getUserFromUsername(username);
-        if (user == null) {
+        if (user == null || username == null || password == null) {
             return Promise.reject(new Error("Unauthorized"));
         }
         const hash = createHash("sha256");
@@ -59,6 +51,18 @@ class DataService {
 
     private getUser(value: string, field: string) {
         return this.users.find((x) => x[field] === value);
+    }
+
+    private generateSalt(): Promise<Buffer> {
+        return new Promise((resolve, reject) => {
+            randomBytes(12, (err: Error, buf: Buffer) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(buf);
+                }
+            });
+        });
     }
 }
 

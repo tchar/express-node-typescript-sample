@@ -1,6 +1,7 @@
 import { environment } from "@app/environments/environment";
 import { ExpressModuleImpl } from "@app/express/express_module";
 import { PrefixLogger } from "@app/logger/prefix_logger";
+import { User } from "@app/models/user";
 import { NextFunction, Request, Response } from "express";
 
 class BasicAuthMiddleware extends ExpressModuleImpl {
@@ -12,6 +13,7 @@ class BasicAuthMiddleware extends ExpressModuleImpl {
             next();
             return;
         }
+
         let authorization: any = req.header("Authorization");
         if (environment.BASIC_AUTH == null || environment.BASIC_AUTH.AUTHS == null
             || authorization == null || typeof authorization !== "string") {
@@ -20,15 +22,23 @@ class BasicAuthMiddleware extends ExpressModuleImpl {
             res.status(401).send();
         }
         authorization = Buffer.from(authorization.replace("Basic ", ""), "base64").toString("utf-8").split(":");
-        if (authorization.length !== 2 || environment.BASIC_AUTH.AUTHS[authorization[0]] !== authorization[1]) {
+        if (authorization.length !== 2) {
             this.logger.warn({ requestId: req.id }, "Basic Authorization Failed");
             res.setHeader("WWW-Authenticate", "Basic");
             res.status(401).send();
             return;
         }
-        this.logger.info({ requestId: req.id }, "Basic Authorization Success");
-        next();
 
+        User.login(authorization[0], authorization[1])
+        .then(() => {
+            this.logger.info({ requestId: req.id }, "Basic Authorization Success");
+            next();
+        })
+        .catch((err: Error) => {
+            this.logger.warn({ requestId: req.id }, "Basic Authorization Failed");
+            res.setHeader("WWW-Authenticate", "Basic");
+            res.status(401).send();
+        });
     }
 
 }
