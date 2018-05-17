@@ -1,14 +1,16 @@
-import { IExpressModule } from "@app/express_module";
+import { ExpressModuleImpl } from "@app/express_module";
 import { PrefixLogger } from "@app/logger/prefix_logger";
 import { NextFunction, Request, Response } from "express";
 
-class ApiController implements IExpressModule {
+class ApiController extends ExpressModuleImpl {
+    private logger: PrefixLogger = PrefixLogger.getLogger(ApiController.name);
 
-    private static logger: PrefixLogger = PrefixLogger.getLogger(ApiController.name);
-
-    public handle(req: Request, res: Response, next: NextFunction) {
-        ApiController.logger.info("Incoming request");
-        res.send("Ok");
+    public post(): (req: any, res: Response, next: NextFunction) => void {
+        const thisContext = this;
+        return (req: any, res: Response, next: NextFunction) => {
+            thisContext.logger.addPrefix("post").info({ requestId: req.id }, "Incoming request");
+            res.json({data: "some data"});
+        };
     }
 }
 
