@@ -23,6 +23,7 @@ class Logger {
         }
         Logger.logger = bunyan.createLogger({
             name: "Server",
+            serializers: bunyan.stdSerializers,
             streams: [{
                 count: 3,
                 level: "info",

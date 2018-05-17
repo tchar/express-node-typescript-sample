@@ -1,5 +1,6 @@
 import { environment } from "@app/environments/environment";
-import { IExpressModule } from "@app/express_module";
+import { ExpressErrorModuleImpl, IExpressErrorModule } from "@app/express/express_error_module";
+import { IExpressModule } from "@app/express/express_module";
 import { PrefixLogger } from "@app/logger/prefix_logger";
 import { RequestIdMiddleware } from "@app/middlewares/request_id";
 import { ApiRouter } from "@app/router/api_router";
@@ -11,11 +12,13 @@ class Server {
     private app: Application;
     private requestIdMiddleware: IExpressModule;
     private apiRouter: IRouter;
+    private errorController: IExpressErrorModule;
 
     constructor() {
         this.app = express();
         this.requestIdMiddleware = new RequestIdMiddleware();
         this.apiRouter = new ApiRouter();
+        this.errorController = new ExpressErrorModuleImpl();
         this.setup();
     }
 
@@ -25,8 +28,9 @@ class Server {
     }
 
     private setup(): void {
-        this.app.use("/api", this.requestIdMiddleware.use());
+        this.app.use("/api", this.requestIdMiddleware.use.bind(this.requestIdMiddleware));
         this.app.use("/api", this.apiRouter.getExpressRouter());
+        this.app.use(this.errorController.use.bind(this.errorController));
     }
 }
 
