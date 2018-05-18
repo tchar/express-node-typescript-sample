@@ -1,8 +1,8 @@
+import { environment } from "@app/environments/environment";
 import Sequelize from "sequelize";
 
-const sequelize = new Sequelize("database", "root", "root", {
+const sequelize = new Sequelize(environment.DB.NAME, environment.DB.USERNAME, environment.DB.PASSWORD, {
     dialect: "sqlite",
-    host: "localhost",
 
     pool: {
         acquire: 30000,
@@ -16,6 +16,8 @@ const sequelize = new Sequelize("database", "root", "root", {
 
     // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
     operatorsAliases: false,
+    // tslint:disable-next-line:object-literal-sort-keys
+    logging: false,
 });
 
 export default sequelize;

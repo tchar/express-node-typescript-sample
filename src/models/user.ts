@@ -1,7 +1,11 @@
+import { environment } from "@app/environments/environment";
+import { PrefixLogger } from "@app/logger/prefix_logger";
 import db from "@app/services/db";
 import { createHash, randomBytes } from "crypto";
 import Sequelize from "sequelize";
 import uuid from "uuid/v5";
+
+const logger: PrefixLogger = PrefixLogger.getLogger("User");
 
 function generateSalt(): Promise < Buffer > {
     return new Promise((resolve, reject) => {
@@ -66,7 +70,7 @@ const User: any = db.define("users", {
     },
     // tslint:disable-next-line:object-literal-sort-keys
     freezeTableName: true,
-    tableName: "users",
+    tableName: environment.DB.TABLES.USERS.NAME,
 });
 
 User.login = (username: string, password: string): Promise<void> => {
@@ -95,11 +99,12 @@ User.login = (username: string, password: string): Promise<void> => {
 
 User.sync()
 .then(() => {
-    User.create({
+    return User.create({
         username: "test",
         // tslint:disable-next-line:object-literal-sort-keys
         password: "test",
     });
-});
+}).then(() => logger.info("User test created"))
+.catch(() => null);
 
 export {User};

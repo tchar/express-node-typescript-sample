@@ -9,14 +9,13 @@ class BasicAuthMiddleware extends ExpressModuleImpl {
     private logger: PrefixLogger = PrefixLogger.getLogger(BasicAuthMiddleware.name);
 
     public use(req: any, res: Response, next: NextFunction): void {
-        if (!environment.BASIC_AUTH.ENABLED) {
+        if (!environment.BASIC_AUTH) {
             next();
             return;
         }
 
         let authorization: any = req.header("Authorization");
-        if (environment.BASIC_AUTH == null || environment.BASIC_AUTH.AUTHS == null
-            || authorization == null || typeof authorization !== "string") {
+        if (environment.BASIC_AUTH == null || authorization == null || typeof authorization !== "string") {
             this.logger.warn({ requestId: req.id }, "Basic Authorization Failed");
             res.setHeader("WWW-Authenticate", "Basic");
             res.status(401).send();
