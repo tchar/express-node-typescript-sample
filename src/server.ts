@@ -1,3 +1,4 @@
+import { NotFoundController } from "@app/controllers/notfound_controller";
 import { environment } from "@app/environments/environment";
 import { ExpressErrorModuleImpl, IExpressErrorModule } from "@app/express/express_error_module";
 import { IExpressModule } from "@app/express/express_module";
@@ -12,12 +13,14 @@ class Server {
     private app: Application;
     private requestIdMiddleware: IExpressModule;
     private apiRouter: IRouter;
+    private notFoundController: IExpressModule;
     private errorController: IExpressErrorModule;
 
     constructor() {
         this.app = express();
         this.requestIdMiddleware = new RequestIdMiddleware();
         this.apiRouter = new ApiRouter();
+        this.notFoundController = new NotFoundController();
         this.errorController = new ExpressErrorModuleImpl();
         this.setup();
     }
@@ -31,6 +34,7 @@ class Server {
         this.app.use("/api", this.requestIdMiddleware.use.bind(this.requestIdMiddleware));
         this.app.use("/api", this.apiRouter.getExpressRouter());
         this.app.use(this.errorController.use.bind(this.errorController));
+        this.app.use(this.notFoundController.use.bind(this.notFoundController));
     }
 }
 

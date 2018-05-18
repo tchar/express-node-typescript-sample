@@ -29,8 +29,9 @@ class BasicAuthMiddleware extends ExpressModuleImpl {
         }
 
         User.login(authorization[0], authorization[1])
-        .then(() => {
+        .then((user: any) => {
             this.logger.info({ requestId: req.id }, "Basic Authorization Success");
+            req.user = user;
             next();
         })
         .catch((err: Error) => {

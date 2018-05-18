@@ -73,7 +73,7 @@ const User: any = db.define("users", {
     tableName: environment.DB.TABLES.USERS.NAME,
 });
 
-User.login = (username: string, password: string): Promise<void> => {
+User.login = (username: string, password: string): Promise<any> => {
     if (username == null || password == null) {
         return Promise.reject(new Error("Username or password is empty"));
     }
@@ -93,7 +93,11 @@ User.login = (username: string, password: string): Promise<void> => {
         if (password !== user.password) {
             return Promise.reject("Invalid username or password");
         }
-        return null;
+        return {
+            uuid: user.uuid,
+            // tslint:disable-next-line:object-literal-sort-keys
+            username: user.username,
+        };
     });
 },
 

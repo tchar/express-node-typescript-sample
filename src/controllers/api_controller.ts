@@ -8,7 +8,7 @@ class ApiController extends ExpressModuleImpl {
     public post(req: any, res: Response, next: NextFunction): void {
         const postLogger: PrefixLogger = this.logger.addPrefix("post");
         postLogger.info({ requestId: req.id }, "Incoming request");
-        res.json({ data: "some data" });
+        res.json({ user: req.user, data: "some data" });
     }
 }
 
